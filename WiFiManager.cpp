@@ -927,7 +927,7 @@ void WiFiManager::handleRoot() {
   handleRequest();
   String page = getHTTPHead(FPSTR(S_options)); // @token options
   String str  = FPSTR(HTTP_ROOT_MAIN);
-  str.replace(FPSTR(T_v),configPortalActive ? _apName : WiFi.localIP().toString()); // use ip if ap is not active for heading
+  // str.replace(FPSTR(T_v), configPortalActive ? _apName : WiFi.localIP().toString()); // use ip if ap is not active for heading
   page += str;
   page += FPSTR(HTTP_PORTAL_OPTIONS);
   page += getMenuOut();
@@ -950,6 +950,7 @@ void WiFiManager::handleWifi(boolean scan) {
   DEBUG_WM(DEBUG_VERBOSE,F("<- HTTP Wifi"));
   handleRequest();
   String page = getHTTPHead(FPSTR(S_titlewifi)); // @token titlewifi
+  page+=getMenuOut();
   if (scan) {
     // DEBUG_WM(DEBUG_DEV,"refresh flag:",server->hasArg(F("refresh")));
     WiFi_scanNetworks(server->hasArg(F("refresh")),false); //wifiscan, force if arg refresh
@@ -995,6 +996,7 @@ void WiFiManager::handleParam(){
 
   pitem = FPSTR(HTTP_FORM_START);
   pitem.replace(FPSTR(T_v), F("paramsave"));
+  page += getMenuOut();
   page += pitem;
 
   page += getParamOut();
@@ -1010,12 +1012,13 @@ void WiFiManager::handleParam(){
 
 
 String WiFiManager::getMenuOut(){
-  String page;  
-
+  String page;
+  page += "<ul>";
   for(auto menuId :_menuIds ){
     if(((String)menuId == "param") && (_paramsCount == 0)) continue; // no params set, omit params
     page += HTTP_PORTAL_MENU[menuId];
   }
+  page += "</ul>";
 
   return page;
 }
@@ -1164,7 +1167,7 @@ String WiFiManager::WiFiManager::getScanItemOut(){
           if(tok_e) item.replace(FPSTR(T_e), encryptionTypeStr(enc_type));
           if(tok_r) item.replace(FPSTR(T_r), (String)rssiperc); // rssi percentage 0-100
           if(tok_R) item.replace(FPSTR(T_R), (String)WiFi.RSSI(indices[i])); // rssi db
-          if(tok_q) item.replace(FPSTR(T_q), (String)int(round(map(rssiperc,0,100,1,4)))); //quality icon 1-4
+          if(tok_q) item.replace(FPSTR(T_q), (String)round(map(rssiperc,0,100,1,4))); //quality icon 1-4
           if(tok_i){
             if (enc_type != WM_WIFIOPEN) {
               item.replace(FPSTR(T_i), F("l"));
@@ -1415,7 +1418,11 @@ void WiFiManager::handleInfo() {
   DEBUG_WM(DEBUG_VERBOSE,F("<- HTTP Info"));
   handleRequest();
   String page = getHTTPHead(FPSTR(S_titleinfo)); // @token titleinfo
+
+  page += getMenuOut();
+  page += "<p><strong>";
   reportStatus(page);
+  page += "</strong></p>";
 
   uint16_t infos = 0;
 
@@ -1727,6 +1734,7 @@ void WiFiManager::handleErase(boolean opt) {
   DEBUG_WM(DEBUG_VERBOSE,F("<- HTTP Erase"));
   handleRequest();
   String page = getHTTPHead(FPSTR(S_titleerase)); // @token titleerase
+  
 
   bool ret = erase(opt);
 

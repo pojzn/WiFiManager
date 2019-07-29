@@ -13,21 +13,20 @@
 #ifndef WIFI_MANAGER_OVERRIDE_STRINGS
 // !!! THIS DOES NOT WORK, you cannot define in a sketch, if anyone one knows how to order includes to be able to do this help!
 
-const char HTTP_HEAD_START[]       PROGMEM = "<!DOCTYPE html><html lang='en'><head><meta name='format-detection' content='telephone=no'><meta charset='UTF-8'><meta  name='viewport' content='width=device-width,initial-scale=1,user-scalable=no'/><title>{v}</title>";
-const char HTTP_SCRIPT[]           PROGMEM = "<script>function c(l){document.getElementById('s').value=l.innerText||l.textContent;document.getElementById('p').focus();}</script>";
-const char HTTP_HEAD_END[]         PROGMEM = "</head><body class='{c}'><div class='wrap'>";
-
-const char HTTP_ROOT_MAIN[]        PROGMEM = "<h1>{v}</h1><h3>WiFiManager</h3>";
-const char * const HTTP_PORTAL_MENU[] PROGMEM = {
-"<form action='/wifi'    method='get'><button>Configure WiFi</button></form><br/>\n", // MENU_WIFI
-"<form action='/0wifi'   method='get'><button>Configure WiFi (No Scan)</button></form><br/>\n", // MENU_WIFINOSCAN
-"<form action='/info'    method='get'><button>Info</button></form><br/>\n", // MENU_INFO
-"<form action='/param'   method='get'><button>Setup</button></form><br/>\n",//MENU_PARAM
-"<form action='/close'   method='get'><button>Close</button></form><br/>\n", // MENU_CLOSE
-"<form action='/restart' method='get'><button>Restart</button></form><br/>\n",// MENU_RESTART
-"<form action='/exit'    method='get'><button>Exit</button></form><br/>\n",  // MENU_EXIT
-"<form action='/erase'   method='get'><button class='D'>Erase</button></form><br/>\n", // MENU_ERASE
-"<hr><br/>" // MENU_SEP
+const char HTTP_HEAD_START[] PROGMEM = "<html lang=\"en\"><head><title>NixieTap Configuration Portal</title>";
+const char HTTP_SCRIPT[]           PROGMEM = "";
+const char HTTP_HEAD_END[] PROGMEM = "</head><body><div class='container'><header><div id =\"naslov\"><a href=\"/\"><img src=\"data:image/png;base64,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\" alt = \"\"/></a></div></header>";
+const char HTTP_ROOT_MAIN[] PROGMEM = "";
+const char *const HTTP_PORTAL_MENU[] PROGMEM = {
+    "<li><a href='/wifi'>Configure WiFi</a></li>\n",                 // MENU_WIFI
+    "<li><a href='/0wifi'>Configure WiFi (No Scan)</a></li>\n",      // MENU_WIFINOSCAN
+    "<li><a href='/info'   >Info</a></li>\n",                        // MENU_INFO
+    "<li><a href='/param'  >Setup</a></li>\n",                       //MENU_PARAM
+    "<li><a href='/close'  >Close</a></li>\n",                       // MENU_CLOSE
+    "<li><a href='/restart'>Restart</a></li>\n",                     // MENU_RESTART
+    "<li><a href='/exit'   >Exit</a></li>\n",                        // MENU_EXIT
+    "<li><a href='/erase'>Erase</a></li>\n", // MENU_ERASE
+    "<hr><br/>"                                                      // MENU_SEP
 };
 
 // const char HTTP_PORTAL_OPTIONS[]   PROGMEM = strcat(HTTP_PORTAL_MENU[0] , HTTP_PORTAL_MENU[3] , HTTP_PORTAL_MENU[7]);
@@ -60,58 +59,43 @@ const char HTTP_STATUS_OFFFAIL[]   PROGMEM = "<br/>Could not Connect"; // WL_CON
 const char HTTP_STATUS_NONE[]      PROGMEM = "<div class='msg'>No AP set</div>";
 const char HTTP_BR[]               PROGMEM = "<br/>";
 
-const char HTTP_STYLE[]            PROGMEM = "<style>"
-".c,body{text-align:center;font-family:verdana}div,input{padding:5px;font-size:1em;margin:5px 0;box-sizing:border-box;}"
-"input,button,.msg{border-radius:.3rem;width: 100%}"
-"button,input[type='button'],input[type='submit']{cursor:pointer;border:0;background-color:#1fa3ec;color:#fff;line-height:2.4rem;font-size:1.2rem;width:100%}"
-"input[type='file']{border:1px solid #1fa3ec}"
-".wrap {text-align:left;display:inline-block;min-width:260px;max-width:500px}"
-// links
-"a{color:#000;font-weight:700;text-decoration:none}a:hover{color:#1fa3ec;text-decoration:underline}"
-// quality icons
-".q{height:16px;margin:0;padding:0 5px;text-align:right;min-width:38px;float:right}.q.q-0:after{background-position-x:0}.q.q-1:after{background-position-x:-16px}.q.q-2:after{background-position-x:-32px}.q.q-3:after{background-position-x:-48px}.q.q-4:after{background-position-x:-64px}.q.l:before{background-position-x:-80px;padding-right:5px}.ql .q{float:left}.q:after,.q:before{content:'';width:16px;height:16px;display:inline-block;background-repeat:no-repeat;background-position: 16px 0;"
-"background-image:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAAAQCAMAAADeZIrLAAAAJFBMVEX///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADHJj5lAAAAC3RSTlMAIjN3iJmqu8zd7vF8pzcAAABsSURBVHja7Y1BCsAwCASNSVo3/v+/BUEiXnIoXkoX5jAQMxTHzK9cVSnvDxwD8bFx8PhZ9q8FmghXBhqA1faxk92PsxvRc2CCCFdhQCbRkLoAQ3q/wWUBqG35ZxtVzW4Ed6LngPyBU2CobdIDQ5oPWI5nCUwAAAAASUVORK5CYII=');}"
-// icons @2x media query (32px rescaled)
-"@media (-webkit-min-device-pixel-ratio: 2),(min-resolution: 192dpi){.q:before,.q:after {"
-"background-image:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALwAAAAgCAMAAACfM+KhAAAALVBMVEX///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAOrOgAAAADnRSTlMAESIzRGZ3iJmqu8zd7gKjCLQAAACmSURBVHgB7dDBCoMwEEXRmKlVY3L//3NLhyzqIqSUggy8uxnhCR5Mo8xLt+14aZ7wwgsvvPA/ofv9+44334UXXngvb6XsFhO/VoC2RsSv9J7x8BnYLW+AjT56ud/uePMdb7IP8Bsc/e7h8Cfk912ghsNXWPpDC4hvN+D1560A1QPORyh84VKLjjdvfPFm++i9EWq0348XXnjhhT+4dIbCW+WjZim9AKk4UZMnnCEuAAAAAElFTkSuQmCC');"
-"background-size: 95px 16px;}}"
-// msg callouts
-".msg{padding:20px;margin:20px 0;border:1px solid #eee;border-left-width:5px;border-left-color:#777}.msg h4{margin-top:0;margin-bottom:5px}.msg.P{border-left-color:#1fa3ec}.msg.P h4{color:#1fa3ec}.msg.D{border-left-color:#dc3630}.msg.D h4{color:#dc3630}"
-// lists
-"dt{font-weight:bold}dd{margin:0;padding:0 0 0.5em 0;min-height:12px}"
-"td{vertical-align: top;}"
-".h{display:none}"
-"button.D{background-color:#dc3630}"
-// invert
-"body.invert,body.invert a,body.invert h1 {background-color:#060606;color:#fff;}"
-"body.invert .msg{color:#fff;background-color:#282828;border-top:1px solid #555;border-right:1px solid #555;border-bottom:1px solid #555;}"
-"body.invert .q[role=img]{-webkit-filter:invert(1);filter:invert(1);}"
-"</style>";
+const char HTTP_STYLE[] PROGMEM = "<style>html{background:#f2f1ef; font-family: \"Courier New\";} .container{float:left;margin-left: 25%;margin-top: 5%;width:50%;box-shadow: 0px 4px 8px #9a9a9a;background-color: white;}"
+                                  "header{float:left; width:100%; background: repeating-linear-gradient(135deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1) 5px, rgba(0, 0, 0, 0.2) 5px, rgba(0, 0, 0, 0.2) 10px);}"
+                                  "#naslov {float: right; padding: 3%;}"
+                                  "nav{float:left;width:100 %;}"
+                                  "ul{float:left;padding:0;margin:0;width:100%;background-color:white;}"
+                                  "ul li{padding: 0;float: left;list-style:none; width: 20%;}"
+                                  "ul li a{display: block; float: left; text-decoration: none; width:100%; text-align: center; padding:8% 0;background-color: rgba(0, 0, 0, 0.2);transition:background-color 0.5s ease 0.2s;color:black;}"
+                                  "ul li a:hover{background-color: rgba(0, 0, 0, 0.33)}"
+                                  ".msg {float:left;}"
+                                  "dt {float:left;width:50%;}"
+                                  "dd {float:right;width:50%; margin-left:0;}"
+                                  "#sketch_size{float:left;width:100%;}</style>";
 
-const char HTTP_HELP[]             PROGMEM =
- "<br/><h3>Available Pages</h3><hr>"
- "<table class='table'>"
- "<thead><tr><th>Page</th><th>Function</th></tr></thead><tbody>"
- "<tr><td><a href='/'>/</a></td>"
- "<td>Menu page.</td></tr>"
- "<tr><td><a href='/wifi'>/wifi</a></td>"
- "<td>Show WiFi scan results and enter WiFi configuration.(/0wifi noscan)</td></tr>"
- "<tr><td><a href='/wifisave'>/wifisave</a></td>"
- "<td>Save WiFi configuration information and configure device. Needs variables supplied.</td></tr>"
- "<tr><td><a href='/param'>/param</a></td>"
- "<td>Parameter page</td></tr>"
- "<tr><td><a href='/info'>/info</a></td>"
- "<td>Information page</td></tr>"
- "<tr><td><a href='/close'>/close</a></td>"
- "<td>Close the captiveportal popup,configportal will remain active</td></tr>"
- "<tr><td><a href='/exit'>/exit</a></td>"
- "<td>Exit Config Portal, configportal will close</td></tr>"
- "<tr><td><a href='/restart'>/restart</a></td>"
- "<td>Reboot the device</td></tr>"
- "<tr><td><a href='/erase'>/erase</a></td>"
- "<td>Erase WiFi configuration and reboot Device. Device will not reconnect to a network until new WiFi configuration data is entered.</td></tr>"
- "</table>"
- "<p/>More information about WiFiManager at <a href='https://github.com/tzapu/WiFiManager'>https://github.com/tzapu/WiFiManager</a>.";
+const char HTTP_HELP[] PROGMEM =
+    "<br/><h3>Available Pages</h3><hr>"
+    "<table class='table'>"
+    "<thead><tr><th>Page</th><th>Function</th></tr></thead><tbody>"
+    "<tr><td><a href='/'>/</a></td>"
+    "<td>Menu page.</td></tr>"
+    "<tr><td><a href='/wifi'>/wifi</a></td>"
+    "<td>Show WiFi scan results and enter WiFi configuration.(/0wifi noscan)</td></tr>"
+    "<tr><td><a href='/wifisave'>/wifisave</a></td>"
+    "<td>Save WiFi configuration information and configure device. Needs variables supplied.</td></tr>"
+    "<tr><td><a href='/param'>/param</a></td>"
+    "<td>Parameter page</td></tr>"
+    "<tr><td><a href='/info'>/info</a></td>"
+    "<td>Information page</td></tr>"
+    "<tr><td><a href='/close'>/close</a></td>"
+    "<td>Close the captiveportal popup,configportal will remain active</td></tr>"
+    "<tr><td><a href='/exit'>/exit</a></td>"
+    "<td>Exit Config Portal, configportal will close</td></tr>"
+    "<tr><td><a href='/restart'>/restart</a></td>"
+    "<td>Reboot the device</td></tr>"
+    "<tr><td><a href='/erase'>/erase</a></td>"
+    "<td>Erase WiFi configuration and reboot Device. Device will not reconnect to a network until new WiFi configuration data is entered.</td></tr>"
+    "</table>"
+    "<p/>More information about WiFiManager at <a href='https://github.com/tzapu/WiFiManager'>https://github.com/tzapu/WiFiManager</a>.";
 
 #ifdef JSTEST
 const char HTTP_JS[] PROGMEM = 
@@ -145,8 +129,8 @@ const char HTTP_JS[] PROGMEM =
 	const char HTTP_INFO_fchipid[]    PROGMEM = "<dt>Flash Chip ID</dt><dd>{1}</dd>";
 	const char HTTP_INFO_corever[]    PROGMEM = "<dt>Core Version</dt><dd>{1}</dd>";
 	const char HTTP_INFO_bootver[]    PROGMEM = "<dt>Boot Version</dt><dd>{1}</dd>";
-	const char HTTP_INFO_memsketch[]  PROGMEM = "<dt>Memory - Sketch Size</dt><dd>Used / Total bytes<br/>{1} / {2}";
-	const char HTTP_INFO_memsmeter[]  PROGMEM = "<br/><progress value='{1}' max='{2}'></progress></dd>";
+    const char HTTP_INFO_memsketch[]  PROGMEM = "<dt>Memory - Sketch Size</dt><dt id='sketch_size'>Used / Total bytes</dt><dt>{1} / {2}</dt>";
+    const char HTTP_INFO_memsmeter[]  PROGMEM = "<progress value='{1}' max='{2}'></progress></dd>";
 	const char HTTP_INFO_lastreset[]  PROGMEM = "<dt>Last reset reason</dt><dd>{1}</dd>";
 #endif
 
