@@ -989,22 +989,41 @@ void WiFiManager::handleWifi(boolean scan) {
  */
 void WiFiManager::handleParam(){
   DEBUG_WM(DEBUG_VERBOSE,F("<- HTTP Param"));
+  
   handleRequest();
   String page = getHTTPHead(FPSTR(S_titleparam)); // @token titlewifi
 
   String pitem = "";
 
-  pitem = FPSTR(HTTP_FORM_START);
-  pitem.replace(FPSTR(T_v), F("paramsave"));
+  
   page += getMenuOut();
+  // WIFI part
+  
+  WiFi_scanNetworks(server->hasArg(F("refresh")), false); //wifiscan, force if arg refresh
+  pitem = FPSTR(HTTP_CUSTOM_WIFI);
+  page += "<div style='float:left;width:100%'>"
+  "<h2 style='text-align:center;'>"
+  "WiFi settings</h2></div>";
+  page += getScanItemOut();
+
+  pitem.replace(FPSTR(T_v), F("wifisave")); // set form action
+  pitem.replace(FPSTR(T_v), WiFi_SSID());
   page += pitem;
 
+  // END OF WIFI PART
+
+  // Setup part
+  page += "<div style='float:left;width:100%'>"
+          "<h2 style='text-align:center;'>"
+          "Clock settings</h2></div>";
+  pitem = FPSTR(HTTP_FORM_START);
+  pitem.replace(FPSTR(T_v), F("paramsave"));
   page += getParamOut();
   page += FPSTR(HTTP_FORM_END);
   reportStatus(page);
   page += FPSTR(HTTP_END);
 
-  server->sendHeader(FPSTR(HTTP_HEAD_CL), String(page.length()));
+  // server->sendHeader(FPSTR(HTTP_HEAD_CL), String(page.length()));
   server->send(200, FPSTR(HTTP_HEAD_CT), page);
 
   DEBUG_WM(DEBUG_DEV,F("Sent param page"));
@@ -1151,38 +1170,58 @@ String WiFiManager::WiFiManager::getScanItemOut(){
       bool tok_e = HTTP_ITEM_STR.indexOf(FPSTR(T_e)) > 0;
       bool tok_q = HTTP_ITEM_STR.indexOf(FPSTR(T_q)) > 0;
       bool tok_i = HTTP_ITEM_STR.indexOf(FPSTR(T_i)) > 0;
-      
-      //display networks in page
-      for (int i = 0; i < n; i++) {
-        if (indices[i] == -1) continue; // skip dups
 
-        DEBUG_WM(DEBUG_VERBOSE,F("AP: "),(String)WiFi.RSSI(indices[i]) + " " + (String)WiFi.SSID(indices[i]));
+      page += "<table class='wifi_table'>"
+              "<thead><tr><th> #</th><th>SSID</th><th>Signal strength</th></tr></thead>"
+              "<tbody>";
+    //display networks in page
+    for (int i = 0; i < n; i++)
+    {
+      if (indices[i] == -1)
+        continue; // skip dups
 
-        int rssiperc = getRSSIasQuality(WiFi.RSSI(indices[i]));
-        uint8_t enc_type = WiFi.encryptionType(indices[i]);
+      DEBUG_WM(DEBUG_VERBOSE, F("AP: "), (String)WiFi.RSSI(indices[i]) + " " + (String)WiFi.SSID(indices[i]));
 
-        if (_minimumQuality == -1 || _minimumQuality < rssiperc) {
-          String item = HTTP_ITEM_STR;
-          item.replace(FPSTR(T_v), htmlEntities(WiFi.SSID(indices[i]))); // ssid no encoding
-          if(tok_e) item.replace(FPSTR(T_e), encryptionTypeStr(enc_type));
-          if(tok_r) item.replace(FPSTR(T_r), (String)rssiperc); // rssi percentage 0-100
-          if(tok_R) item.replace(FPSTR(T_R), (String)WiFi.RSSI(indices[i])); // rssi db
-          if(tok_q) item.replace(FPSTR(T_q), (String)round(map(rssiperc,0,100,1,4))); //quality icon 1-4
-          if(tok_i){
-            if (enc_type != WM_WIFIOPEN) {
-              item.replace(FPSTR(T_i), F("l"));
-            } else {
-              item.replace(FPSTR(T_i), "");
-            }
+      int rssiperc = getRSSIasQuality(WiFi.RSSI(indices[i]));
+      uint8_t enc_type = WiFi.encryptionType(indices[i]);
+
+      if (_minimumQuality == -1 || _minimumQuality < rssiperc)
+      {
+        
+        String item = HTTP_ITEM_STR;
+        int num = i + 1;
+        item.replace(FPSTR("{num}"), (String)num);
+        item.replace(FPSTR(T_v), htmlEntities(WiFi.SSID(indices[i]))); // ssid no encoding
+        if (tok_e)
+          item.replace(FPSTR(T_e), encryptionTypeStr(enc_type));
+        if (tok_r)
+          item.replace(FPSTR(T_r), (String)rssiperc); // rssi percentage 0-100
+        if (tok_R)
+          item.replace(FPSTR(T_R), (String)WiFi.RSSI(indices[i])); // rssi db
+        if (tok_q)
+          item.replace(FPSTR(T_q), (String)round(map(rssiperc, 0, 100, 1, 4))); //quality icon 1-4
+        if (tok_i)
+        {
+          if (enc_type != WM_WIFIOPEN)
+          {
+            item.replace(FPSTR(T_i), F("l"));
           }
-          //DEBUG_WM(item);
-          page += item;
-          delay(0);
-        } else {
-          DEBUG_WM(DEBUG_VERBOSE,F("Skipping , does not meet _minimumQuality"));
+          else
+          {
+            item.replace(FPSTR(T_i), "");
+          }
         }
+        //DEBUG_WM(item);
+        page += item;
+        delay(0);
+      }
+      else
+      {
+        DEBUG_WM(DEBUG_VERBOSE, F("Skipping , does not meet _minimumQuality"));
+      }
 
       }
+      page += "</tbody></table>";
       page += FPSTR(HTTP_BR);
     }
 

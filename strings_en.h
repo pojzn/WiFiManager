@@ -33,10 +33,17 @@ const char *const HTTP_PORTAL_MENU[] PROGMEM = {
 const char HTTP_PORTAL_OPTIONS[]   PROGMEM = "";
 const char HTTP_ITEM_QI[]          PROGMEM = "<div role='img' aria-label='{r}%' title='{r}%' class='q q-{q} {i} {h}'></div>"; // rssi icons
 const char HTTP_ITEM_QP[]          PROGMEM = "<div class='q {h}'>{r}%</div>"; // rssi percentage
-const char HTTP_ITEM[]             PROGMEM = "<div><a href='#p' onclick='c(this)'>{v}</a>{qi}{qp}</div>"; // {q} = HTTP_ITEM_QI, {r} = HTTP_ITEM_QP
+const char HTTP_ITEM[]             PROGMEM = "<tr><td>{num}</td><td>{v}</td><td>{qp}</td></tr>"; // {q} = HTTP_ITEM_QI, {r} = HTTP_ITEM_QP
 // const char HTTP_ITEM[]            PROGMEM = "<div><a href='#p' onclick='c(this)'>{v}</a> {R} {r}% {q} {e}</div>"; // test all tokens
 
-const char HTTP_FORM_START[]       PROGMEM = "<form method='POST' action='{v}'>";
+const char HTTP_CUSTOM_WIFI[] PROGMEM = 
+"<form style='float:left;width:100%;' method='POST' action='{v}'><ul class= \"form\" style='float:none;'>"
+"<li><label>Connect to WiFi network:</label>"
+"<input type=\"text\" name=\"ssid\" class=\"field-divided\" placeholder=\"WiFi SSID\"/>"
+"<input type=\"password\" name=\"password\" class=\"field-divided\" placeholder=\"Password\"/></li>"
+"<li><input type=\"submit\" value=\"Submit\"/></li></ul>"
+"</form>";
+      const char HTTP_FORM_START[] PROGMEM = "<form method='POST' action='{v}'>";
 const char HTTP_FORM_WIFI[]        PROGMEM = "<label for='s'>SSID</label><input id='s' name='s' maxlength='32' autocorrect='off' autocapitalize='none' placeholder='{v}'><br/><label for='p'>Password</label><input id='p' name='p' maxlength='64' type='password' placeholder=''>";
 const char HTTP_FORM_WIFI_END[]    PROGMEM = "";
 const char HTTP_FORM_STATIC_HEAD[] PROGMEM = "<hr><br/>";
@@ -59,18 +66,45 @@ const char HTTP_STATUS_OFFFAIL[]   PROGMEM = "<br/>Could not Connect"; // WL_CON
 const char HTTP_STATUS_NONE[]      PROGMEM = "<div class='msg'>No AP set</div>";
 const char HTTP_BR[]               PROGMEM = "<br/>";
 
-const char HTTP_STYLE[] PROGMEM = "<style>html{background:#f2f1ef; font-family: \"Courier New\";} .container{float:left;margin-left: 25%;margin-top: 5%;width:50%;box-shadow: 0px 4px 8px #9a9a9a;background-color: white;}"
+const char HTTP_STYLE[] PROGMEM = "<style>html{background:#f2f1ef; font-family: \"Tahoma\";} .container{float:left;margin-left: 25%;margin-top: 5%;width:50%;box-shadow: 0px 4px 8px #9a9a9a;background-color: white;}"
                                   "header{float:left; width:100%; background: repeating-linear-gradient(135deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1) 5px, rgba(0, 0, 0, 0.2) 5px, rgba(0, 0, 0, 0.2) 10px);}"
                                   "#naslov {float: right; padding: 3%;}"
                                   "nav{float:left;width:100 %;}"
                                   "ul{float:left;padding:0;margin:0;width:100%;background-color:white;}"
-                                  "ul li{padding: 0;float: left;list-style:none; width: 20%;}"
+                                  "ul li{padding: 0;float: left;list-style:none; width: 33.3333%;}"
                                   "ul li a{display: block; float: left; text-decoration: none; width:100%; text-align: center; padding:8% 0;background-color: rgba(0, 0, 0, 0.2);transition:background-color 0.5s ease 0.2s;color:black;}"
                                   "ul li a:hover{background-color: rgba(0, 0, 0, 0.33)}"
                                   ".msg {float:left;}"
                                   "dt {float:left;width:50%;}"
                                   "dd {float:right;width:50%; margin-left:0;}"
-                                  "#sketch_size{float:left;width:100%;}</style>";
+                                  "#sketch_size{float:left;width:100%;}"
+                                  ".form { margin:10px auto; max-width: 400px; padding: 20px 12px 10px 20px;}"
+                                  ".form li {padding: 0; display: block; list-style: none; margin: 10px 0 0 0; width:100%;}"
+                                  ".form label{margin:0 0 3px 0; padding:0px; display:block; font-weight: bold;}"
+                                  ".form input[type=text], .form input[type=date], .form input[type=datetime], "
+                                  ".form input[type=number], .form input[type=search], .form input[type=time], "
+                                  ".form input[type=url], .form input[type=password], .form input[type=email], textarea, select{"
+                                  "box-sizing: border-box; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; "
+                                  "border:1px solid #BEBEBE;	padding: 7px; margin:0px; -webkit-transition: all 0.30s ease-in-out;"
+                                  " -moz-transition: all 0.30s ease-in-out; -ms-transition: all 0.30s ease-in-out; -o-transition: all 0.30s ease-in-out; outline: none;}"
+                                  ".form input[type=text]:focus, .form input[type=date]:focus, .form input[type=datetime]:focus, .form input[type=number]:focus,"
+                                  ".form input[type=search]:focus, .form input[type=password]:focus, .form input[type=time]:focus, .form input[type=url]:focus, .form input[type=email]:focus, "
+                                  ".form textarea:focus, .form select:focus{ -moz-box-shadow: 0 0 8px #88D5E9; -webkit-box-shadow: 0 0 8px #88D5E9; box-shadow: 0 0 8px #88D5E9;"
+                                  " border: 1px solid #88D5E9;}"
+                                  ".form .field-divided{ width: 50%;}"
+                                  ".form .field-long{	width: 100%;}"
+                                  ".form .field-select{ width: 100%;}"
+                                  ".form .field-textarea{	height: 100px;}"
+                                  ".form input[type=submit], .form input[type=button]{ background: #4B99AD; padding: 8px 15px 8px 15px; border: none;	color: #fff;}"
+                                  ".form input[type=submit]:hover, .form input[type=button]:hover{ background: #4691A4; box-shadow:none; -moz-box-shadow:none; -webkit-box-shadow:none;}"
+                                  ".form .required{ color:red;}"
+                                  ".wifi_table{ margin-left:auto;margin-right:auto;width:auto;border-collapse: collapse;border-spacing:0;empty-cells:show;border:1px solid #cbcbcb;}"
+                                  ".wifi_table thead{ background-color:#e0e0e0;color:#000;text-align:left;vertical-align:bottom;}"
+                                  ".wifi_table th{ border-left: 1px solid #cbcbcb; border-left-width: 1px; border-width: 0 0 0 1px;font-size: inherit;margin: 0;overflow: visible;padding: .5em 1em;}"
+                                  ".wifi_table td, .wifi_table th{ border-bottom: 1px solid #cbcbcb; background-color: transparent;"
+                                  "border-left: 1px solid #cbcbcb; border-left-width:1px; border-width: 0 0 0 1px;"
+                                  "border-bottom-width:1px; font-size:inherit;margin:0;overflow:visible;padding:.5em 1em;}"
+                                  "</style>";
 
 const char HTTP_HELP[] PROGMEM =
     "<br/><h3>Available Pages</h3><hr>"
