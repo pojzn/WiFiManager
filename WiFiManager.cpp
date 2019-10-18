@@ -480,7 +480,6 @@ void WiFiManager::setupConfigPortal() {
 
   /* Setup httpd callbacks, web pages: root, wifi config pages, SO captive portal detectors and not found. */
   server->on(String(FPSTR(R_root)).c_str(),       std::bind(&WiFiManager::handleRoot, this));
-  server->on(String("/get_wifi_networks").c_str(), std::bind(&WiFiManager::getWifiNetworks, this));
   server->on(String(FPSTR(R_wifi)).c_str(),       std::bind(&WiFiManager::handleWifi, this, true));
   server->on(String(FPSTR(R_wifinoscan)).c_str(), std::bind(&WiFiManager::handleWifi, this, false));
   server->on(String(FPSTR(R_wifisave)).c_str(),   std::bind(&WiFiManager::handleWifiSave, this));
@@ -953,28 +952,6 @@ void WiFiManager::handleRoot() {
  * HTTPD CALLBACK Wifi config page handler
  */
 
-void WiFiManager::testing(int networks){
-  handleRequest();
-  String network_string = "";
-  int i = networks;
-  Serial.print("Found "+String(networks)+" networks:");
-  for (int x=0; x < i; x++){
-    String ssid = WiFi.SSID(x);
-    Serial.print(ssid+"\n");
-    network_string += ssid+";";
-  }
-  Serial.print("----------------");
-  Serial.println(WiFi.isConnected());
-  WiFi.scanDelete();
-  server->sendHeader(FPSTR(HTTP_HEAD_CL), String(network_string.length()));
-  server->send(200, FPSTR(HTTP_HEAD_CT), network_string);
-}
-
-void WiFiManager::getWifiNetworks(){
-  using namespace std::placeholders; // for `_1`
-  WiFi.scanNetworksAsync(std::bind(&WiFiManager::testing, this, _1));
-  
-}
 
 void WiFiManager::handleWifi(boolean scan) {
   DEBUG_WM(DEBUG_VERBOSE,F("<- HTTP Wifi"));
