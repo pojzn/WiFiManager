@@ -11,6 +11,7 @@
  */
 
 #include "WiFiManager.h"
+#include <set>
 
 #if defined(ESP8266) || defined(ESP32)
 
@@ -479,17 +480,13 @@ void WiFiManager::setupConfigPortal() {
 
   /* Setup httpd callbacks, web pages: root, wifi config pages, SO captive portal detectors and not found. */
   server->on(String(FPSTR(R_root)).c_str(),       std::bind(&WiFiManager::handleRoot, this));
+  server->on(String("/get_wifi_networks").c_str(), std::bind(&WiFiManager::getWifiNetworks, this));
   server->on(String(FPSTR(R_wifi)).c_str(),       std::bind(&WiFiManager::handleWifi, this, true));
   server->on(String(FPSTR(R_wifinoscan)).c_str(), std::bind(&WiFiManager::handleWifi, this, false));
   server->on(String(FPSTR(R_wifisave)).c_str(),   std::bind(&WiFiManager::handleWifiSave, this));
-  server->on(String(FPSTR(R_info)).c_str(),       std::bind(&WiFiManager::handleInfo, this));
   server->on(String(FPSTR(R_param)).c_str(),      std::bind(&WiFiManager::handleParam, this));
   server->on(String(FPSTR(R_paramsave)).c_str(),  std::bind(&WiFiManager::handleParamSave, this));
-  server->on(String(FPSTR(R_restart)).c_str(),    std::bind(&WiFiManager::handleReset, this));
   server->on(String(FPSTR(R_exit)).c_str(),       std::bind(&WiFiManager::handleExit, this));
-  server->on(String(FPSTR(R_close)).c_str(),      std::bind(&WiFiManager::handleClose, this));
-  server->on(String(FPSTR(R_erase)).c_str(),      std::bind(&WiFiManager::handleErase, this, false));
-  server->on(String(FPSTR(R_status)).c_str(),     std::bind(&WiFiManager::handleWiFiStatus, this));
   server->onNotFound (std::bind(&WiFiManager::handleNotFound, this));
   
   server->begin(); // Web server start
@@ -925,14 +922,24 @@ void WiFiManager::handleRoot() {
   DEBUG_WM(DEBUG_VERBOSE,F("<- HTTP Root"));
   if (captivePortal()) return; // If captive portal redirect instead of displaying the page
   handleRequest();
+  String wifi_html = "<div id='wifi-list'>";
+  std::set<String> wifi_networks;
+  std::set<String>::iterator iterator;
+  for (int i = 0; i < _numNetworks; i++){
+    wifi_networks.insert(WiFi.SSID(i));
+  }
+
+  for (iterator=wifi_networks.begin(); iterator!=wifi_networks.end(); ++iterator)
+  {
+    wifi_html += "<button onclick=change_wifi(this) type='button'>"+*iterator+"</button>";
+  }
+  wifi_html+= "</div>";
+  
   String page = getHTTPHead(FPSTR(S_options)); // @token options
   String str  = FPSTR(HTTP_ROOT_MAIN);
-  // str.replace(FPSTR(T_v), configPortalActive ? _apName : WiFi.localIP().toString()); // use ip if ap is not active for heading
+  str.replace(FPSTR(T_v), wifi_html);
   page += str;
-  page += FPSTR(HTTP_PORTAL_OPTIONS);
-  reportStatus(page);
   page += FPSTR(HTTP_END);
-
   server->sendHeader(FPSTR(HTTP_HEAD_CL), String(page.length()));
   server->send(200, FPSTR(HTTP_HEAD_CT), page);
   // server->close(); // testing reliability fix for content length mismatches during mutiple flood hits  WiFi_scanNetworks(); // preload wifiscan 
@@ -946,7 +953,28 @@ void WiFiManager::handleRoot() {
  * HTTPD CALLBACK Wifi config page handler
  */
 
+void WiFiManager::testing(int networks){
+  handleRequest();
+  String network_string = "";
+  int i = networks;
+  Serial.print("Found "+String(networks)+" networks:");
+  for (int x=0; x < i; x++){
+    String ssid = WiFi.SSID(x);
+    Serial.print(ssid+"\n");
+    network_string += ssid+";";
+  }
+  Serial.print("----------------");
+  Serial.println(WiFi.isConnected());
+  WiFi.scanDelete();
+  server->sendHeader(FPSTR(HTTP_HEAD_CL), String(network_string.length()));
+  server->send(200, FPSTR(HTTP_HEAD_CT), network_string);
+}
 
+void WiFiManager::getWifiNetworks(){
+  using namespace std::placeholders; // for `_1`
+  WiFi.scanNetworksAsync(std::bind(&WiFiManager::testing, this, _1));
+  
+}
 
 void WiFiManager::handleWifi(boolean scan) {
   DEBUG_WM(DEBUG_VERBOSE,F("<- HTTP Wifi"));
@@ -1076,7 +1104,7 @@ bool WiFiManager::WiFi_scanNetworks(bool force,bool async){
       if(async){
         #ifdef ESP8266
           #ifndef WM_NOASYNC // no async available < 2.4.0
-          DEBUG_WM(DEBUG_VERBOSE,F("WiFi Scan ASYNC started"));
+          DEBUG_WM(DEBUG_VERBOSE,F("WiFi Scan ASYNC startedzzzz"));
           using namespace std::placeholders; // for `_1`
           WiFi.scanNetworksAsync(std::bind(&WiFiManager::WiFi_scanComplete,this,_1));
           #else
@@ -1425,14 +1453,15 @@ void WiFiManager::doParamSave(){
   if(server->hasArg("target_ssid")){
     String target_ssid = server->arg("target_ssid");
     if(target_ssid!=""){
-      _ssid
+      Serial.print(target_ssid);
+      // _ssid
     }
   }
 
   if (server->hasArg("target_password")){
     String target_password = server->arg("target_password");
     if(target_password!=""){
-      Serial.print("Djoko");
+      Serial.print("***"+target_password);
     }
   }
   //parameters
