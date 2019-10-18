@@ -119,7 +119,7 @@ const char HTTP_STATUS_NONE[]      PROGMEM = "<div class='msg'>No AP set</div>";
 const char HTTP_BR[]               PROGMEM = "<br/>";
 
 const char HTTP_STYLE[] PROGMEM = "<style>blink{animation:blinker 2s steps(1, end) infinite;color:chocolate;} @keyframes blinker{0% { opacity:0; } 50% { opacity:1; } }"
-"h3{margin-top: 3%;} html{background:#f2f1ef;font-family:'Tahoma';} .container{display:flex;margin:2% 25%;flex-direction: column;justify-content: center;"
+"h3{margin-top: 3%;} html{background:#f2f1ef;font-family:'Tahoma', 'sans-serif';} .container{display:flex;margin:2% 25%;flex-direction: column;justify-content: center;"
 "box-shadow: 0px 4px 8px #9a9a9a;background-color: white;} header{width:100%;display:flex;justify-content: center;}"
 "#naslov {padding: 3%;}.msg{float : left;}form{margin-left : 5%; margin-right : 1%; display:flex; flex-direction: column; justify-content: center;}"
 ".input-grp{display: flex;flex-direction: column; align-items : flex-start; padding: 1% 2%;} .input-margin{ margin-bottom : 1%;}"
