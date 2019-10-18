@@ -927,7 +927,10 @@ void WiFiManager::handleRoot() {
   handleRequest();
   String page = getHTTPHead(FPSTR(S_options)); // @token options
   String str  = FPSTR(HTTP_ROOT_MAIN);
+  // str.replace(FPSTR(T_v), configPortalActive ? _apName : WiFi.localIP().toString()); // use ip if ap is not active for heading
   page += str;
+  page += FPSTR(HTTP_PORTAL_OPTIONS);
+  reportStatus(page);
   page += FPSTR(HTTP_END);
 
   server->sendHeader(FPSTR(HTTP_HEAD_CL), String(page.length()));
@@ -942,6 +945,9 @@ void WiFiManager::handleRoot() {
 /**
  * HTTPD CALLBACK Wifi config page handler
  */
+
+
+
 void WiFiManager::handleWifi(boolean scan) {
   DEBUG_WM(DEBUG_VERBOSE,F("<- HTTP Wifi"));
   handleRequest();
@@ -1326,6 +1332,7 @@ String WiFiManager::getParamOut(){
   return page;
 }
 
+
 void WiFiManager::handleWiFiStatus(){
   DEBUG_WM(DEBUG_VERBOSE,F("<- HTTP WiFi status "));
   handleRequest();
@@ -1406,8 +1413,8 @@ void WiFiManager::handleParamSave() {
 
   server->sendHeader(FPSTR(HTTP_HEAD_CL), String(page.length()));
   server->send(200, FPSTR(HTTP_HEAD_CT), page);
-
   DEBUG_WM(DEBUG_DEV,F("Sent param save page"));
+  abort = true;
 }
 
 void WiFiManager::doParamSave(){
@@ -1415,11 +1422,25 @@ void WiFiManager::doParamSave(){
   if ( _presavecallback != NULL) {
     _presavecallback();
   }
+  if(server->hasArg("target_ssid")){
+    String target_ssid = server->arg("target_ssid");
+    if(target_ssid!=""){
+      _ssid
+    }
+  }
 
+  if (server->hasArg("target_password")){
+    String target_password = server->arg("target_password");
+    if(target_password!=""){
+      Serial.print("Djoko");
+    }
+  }
   //parameters
   if(_paramsCount > 0){
     DEBUG_WM(DEBUG_VERBOSE,F("Parameters"));
     DEBUG_WM(DEBUG_VERBOSE,FPSTR(D_HR));
+
+    
     for (int i = 0; i < _paramsCount; i++) {
       if (_params[i] == NULL) {
         break; // @todo might not be needed anymore
@@ -1427,6 +1448,7 @@ void WiFiManager::doParamSave(){
       //read parameter from server
       String name = (String)FPSTR(S_parampre)+(String)i;
       String value;
+  
       if(server->hasArg(name)) {
         value = server->arg(name);
       } else {

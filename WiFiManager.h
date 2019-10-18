@@ -399,6 +399,7 @@ class WiFiManager
     void          handleNotFound();
     void          handleExit();
     void          handleClose();
+
     // void          handleErase();
     void          handleErase(boolean opt);
     void          handleParam();
