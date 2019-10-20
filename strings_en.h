@@ -129,7 +129,7 @@ const char HTTP_STYLE[] PROGMEM = "<style>blink{animation:blinker 2s steps(1, en
 "justify-content: center;} #wifi-list button { border : 1px solid rgba(10, 10, 10, 1);background : rgba(255, 255, 255, 1); font-size : 14px; word-wrap: break-word;"
 "color : black; margin-top : 15px; padding : 20px 20px;cursor : pointer;transition : .4s; width: 25%;}.hr_title{ display:block; margin: 0 5% 2% 5%;border-style: solid;"
 "border-width: 4px;} #manual_time_inputs { display: flex; flex-direction: row; } hr{ display:block; margin: 0.5% 95% 2% 0; border-style: solid; border-width : 2px;} input {border:none; border-bottom: 1px solid black; padding:1%;}"
-"@media only screen and (max-width : 800px){ .container{margin:0;}} @media only screen and (max-width : 750px){ #wifi-list button {padding : 7px 7px;}} @media only screen and (max-width: 400px){ #manual_time_inputs { flex-direcion:column;}}</style> ";
+"@media only screen and (max-width : 800px){ .container{margin:0;}} @media only screen and (max-width : 750px){ #wifi-list button {padding : 7px 7px;}} @media only screen and (max-width: 400px){ #manual_time_inputs { flex-direction:column;}}</style> ";
 
     const char HTTP_HELP[] PROGMEM =
         "<br/><h3>Available Pages</h3><hr>"
