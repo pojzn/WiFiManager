@@ -57,8 +57,8 @@ const char HTTP_ROOT_MAIN[] PROGMEM = "<div><hr class='hr_title'><h2 style='text
                                       "<br/><input style='width:30%; margin-top:3%;' type='password' name='target_password' placeholder='Target WiFi network password'></div><h3>TIME AND DATE</h3><hr><div class='input-grp' style='margin-bottom:1%;'>"
                                       "<div><input type='checkbox' name='enableTime' id='show_time'><label for='show_time'>show time</label></div><div><input type='checkbox' name='enableDate' id='show_date'><label for='show_date'>show date</label>"
                                       "</div></div><div class='input-grp'><div>In manual mode, you set the time yourself.</div><div style='margin-top:1%; margin-bottom:1%'>In automatic mode, if Internet is available, Nixie Tap will ping an NTP time server for accurate time.</div>"
-                                      "<div style='margin-top:2%; margin-bottom:2%; display:flex;'><input type='radio' id='man_td' onclick='manual_td()' name='setTimeManuallyFlag' value='1'><label for='man_td'>manual</label><input disabled='disabled' id='time' name='time' type='time'>"
-                                      "<input disabled='disabled' name='date' id='date' type='date'></div><div style='margin-top:1%;'><input type='radio' name='setTimeManuallyFlag' value='0' onclick='automatic_td()' id='auto_td'>"
+                                      "<div style='margin-top:2%; margin-bottom:2%; display:flex;'><input type='radio' id='man_td' onclick='manual_td()' name='setTimeManuallyFlag' value='1'><label for='man_td'>manual</label><div id='manual_time_inputs'><input disabled='disabled' id='time' name='time' type='time'>"
+                                      "<input disabled='disabled' name='date' id='date' type='date'></div></div><div style='margin-top:1%;'><input type='radio' name='setTimeManuallyFlag' value='0' onclick='automatic_td()' id='auto_td'>"
                                       "<label for='auto_td'>automatic</label><input disabled='disabled' type='text' name='offset' id='offset' placeholder='Your GMT offset in minutes'><input disabled='disabled' type='checkbox' name='dst' id='dst'>"
                                       "<label for='dst'>daylight savings time</label></div></div><h3>TEMPERATURE</h3><hr><div style='margin-top:1%; margin-bottom:1%;'><input type='checkbox' name='temperatureEnable' id='show_temp'><label for='show_temp'>show temperature</label>"
                                       "</div><div class='input-grp'><div style='margin-top:1%;'>For this functionality you need the Openweathermap API key. You can get it at <a href='https://openweathermap.org/api'>openweathermap.org/api</a>"
@@ -128,8 +128,8 @@ const char HTTP_STYLE[] PROGMEM = "<style>blink{animation:blinker 2s steps(1, en
 "padding:10px 80px; font-weight: bold;} .buttons {display:flex; justify-content: center;} #wifi-list {display: flex; flex-direction: row; flex-wrap : wrap;"
 "justify-content: center;} #wifi-list button { border : 1px solid rgba(10, 10, 10, 1);background : rgba(255, 255, 255, 1); font-size : 14px; word-wrap: break-word;"
 "color : black; margin-top : 15px; padding : 20px 20px;cursor : pointer;transition : .4s; width: 25%;}.hr_title{ display:block; margin: 0 5% 2% 5%;border-style: solid;"
-"border-width: 4px;} hr{ display:block; margin: 0.5% 95% 2% 0; border-style: solid; border-width : 2px;} input {border:none; border-bottom: 1px solid black; padding:1%;}"
-"@media only screen and (max-width : 800px){ .container{margin:0;}} @media only screen and (max-width : 750px){ #wifi-list button {padding : 7px 7px;}}</style> ";
+"border-width: 4px;} #manual_time_inputs { display: flex; flex-direction: row; } hr{ display:block; margin: 0.5% 95% 2% 0; border-style: solid; border-width : 2px;} input {border:none; border-bottom: 1px solid black; padding:1%;}"
+"@media only screen and (max-width : 800px){ .container{margin:0;}} @media only screen and (max-width : 750px){ #wifi-list button {padding : 7px 7px;}} @media only screen and (max-width: 400px){ #manual_time_inputs { flex-direcion:column;}}</style> ";
 
     const char HTTP_HELP[] PROGMEM =
         "<br/><h3>Available Pages</h3><hr>"
