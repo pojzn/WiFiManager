@@ -21,6 +21,7 @@
 #endif
 
 #include <vector>
+#include <map>
 
 // #define WM_MDNS            // also set MDNS with sethostname
 // #define WM_FIXERASECONFIG  // use erase flash fix
@@ -185,7 +186,7 @@ class WiFiManager
     WiFiManagerParameter** getParameters();
     // returns the Parameters Count
     int           getParametersCount();
-
+    uint8_t connectWifi(String ssid, String pass);
 
     // SET CALLBACKS
 
@@ -287,7 +288,7 @@ class WiFiManager
     #else
         using WM_WebServer = ESP8266WebServer;
     #endif
-    
+    std::map<String, String> nixie_params;
     std::unique_ptr<WM_WebServer> server;
 
   private:
@@ -381,7 +382,6 @@ class WiFiManager
 
     bool          startAP();
 
-    uint8_t       connectWifi(String ssid, String pass);
     bool          setSTAConfig();
     bool          wifiConnectDefault();
     bool          wifiConnectNew(String ssid, String pass);

@@ -480,10 +480,6 @@ void WiFiManager::setupConfigPortal() {
 
   /* Setup httpd callbacks, web pages: root, wifi config pages, SO captive portal detectors and not found. */
   server->on(String(FPSTR(R_root)).c_str(),       std::bind(&WiFiManager::handleRoot, this));
-  server->on(String(FPSTR(R_wifi)).c_str(),       std::bind(&WiFiManager::handleWifi, this, true));
-  server->on(String(FPSTR(R_wifinoscan)).c_str(), std::bind(&WiFiManager::handleWifi, this, false));
-  server->on(String(FPSTR(R_wifisave)).c_str(),   std::bind(&WiFiManager::handleWifiSave, this));
-  server->on(String(FPSTR(R_param)).c_str(),      std::bind(&WiFiManager::handleParam, this));
   server->on(String(FPSTR(R_paramsave)).c_str(),  std::bind(&WiFiManager::handleParamSave, this));
   server->on(String(FPSTR(R_exit)).c_str(),       std::bind(&WiFiManager::handleExit, this));
   server->onNotFound (std::bind(&WiFiManager::handleNotFound, this));
@@ -1081,7 +1077,7 @@ bool WiFiManager::WiFi_scanNetworks(bool force,bool async){
       if(async){
         #ifdef ESP8266
           #ifndef WM_NOASYNC // no async available < 2.4.0
-          DEBUG_WM(DEBUG_VERBOSE,F("WiFi Scan ASYNC startedzzzz"));
+          DEBUG_WM(DEBUG_VERBOSE,F("WiFi Scan ASYNC started"));
           using namespace std::placeholders; // for `_1`
           WiFi.scanNetworksAsync(std::bind(&WiFiManager::WiFi_scanComplete,this,_1));
           #else
@@ -1427,45 +1423,13 @@ void WiFiManager::doParamSave(){
   if ( _presavecallback != NULL) {
     _presavecallback();
   }
-  if(server->hasArg("target_ssid")){
-    String target_ssid = server->arg("target_ssid");
-    if(target_ssid!=""){
-      Serial.print(target_ssid);
-      // _ssid
+  for(int i=0; i < server->args(); i++){
+    if (server->argName(i) == "plain"){
+      continue;
     }
-  }
-
-  if (server->hasArg("target_password")){
-    String target_password = server->arg("target_password");
-    if(target_password!=""){
-      Serial.print("***"+target_password);
+    if(server->arg(i) != ""){
+      nixie_params[server->argName(i)] = server->arg(i);
     }
-  }
-  //parameters
-  if(_paramsCount > 0){
-    DEBUG_WM(DEBUG_VERBOSE,F("Parameters"));
-    DEBUG_WM(DEBUG_VERBOSE,FPSTR(D_HR));
-
-    
-    for (int i = 0; i < _paramsCount; i++) {
-      if (_params[i] == NULL) {
-        break; // @todo might not be needed anymore
-      }
-      //read parameter from server
-      String name = (String)FPSTR(S_parampre)+(String)i;
-      String value;
-  
-      if(server->hasArg(name)) {
-        value = server->arg(name);
-      } else {
-        value = server->arg(_params[i]->getID());
-      }
-
-      //store it in params array
-      value.toCharArray(_params[i]->_value, _params[i]->_length+1); // length+1 null terminated
-      DEBUG_WM(DEBUG_VERBOSE,(String)_params[i]->getID() + ":",value);
-    }
-    DEBUG_WM(DEBUG_VERBOSE,FPSTR(D_HR));
   }
 
    if ( _saveparamscallback != NULL) {
